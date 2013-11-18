@@ -35,41 +35,50 @@ public class EulerianCycle {
             Edge e = g.edges().iterator().next();
 
             int start = e.either();
-            cycle = walk(g, e, start, start);
-
-            while (cycle != null && marked.size() != g.E()) {
-                cycle = walkFromCycle(g, cycle);
-            }
+            cycle = expandCycle(g, new ArrayList<Integer>());
 
             if (cycle != null)
                 cycle.add(start);
 
-            hasEulerianCycle = (cycle != null && marked.size() == g.E());
+            hasEulerianCycle = (cycle!= null && cycle.size() == (g.E() + 1));
         }
     }
 
-    private List<Integer> walkFromCycle(EdgeWeightedGraph g, List<Integer> path) {
+    private List<Integer> expandCycle(EdgeWeightedGraph g, List<Integer> cycle) {
         for (Edge e : g.edges()) {
 
             if (!marked.contains(e)) {
                 int v = e.either();
-                if (!path.contains(v))
+                if (!cycle.contains(v))
                     v = e.other(v);
 
-                if (path.contains(v)) {
-                    // Edge e has a point on the path.
-                    List<Integer> newLoop = walk(g, e, v, v);
+                // If Edge e has a point on the cycle OR cycle doesn't exist.
+                if (cycle.isEmpty() || cycle.contains(v)) {
+                    List<Integer> newLoop = cycle(g, e, v);
                     if (newLoop == null)
-                        return null;
+                        continue;
 
-                    path.addAll(path.indexOf(v) + 1, newLoop);
+                    cycle.addAll(cycle.indexOf(v) + 1, newLoop);
                     
-                    return path;
+                    return expandCycle(g, cycle);
                 }
             }
         }
 
-        return null;
+        // No expansion of cycle possible
+        return cycle;
+    }
+    
+    /**
+     * Find a cycle on graph 'g' which starts at vertex v towards edge e.
+     * 
+     * @param g
+     * @param e
+     * @param v
+     * @return
+     */
+    private List<Integer> cycle(EdgeWeightedGraph g, Edge e, int v) {
+    	return walk(g, e, v, v);
     }
 
     /**
@@ -88,26 +97,25 @@ public class EulerianCycle {
         marked.add(e);
         int end = e.other(from);
 
-        // Completed the cycle
+        // Reached the target
         if (end == target)
             return newPath(end);
 
-        for (Edge outEdge : g.adj(end)) {
-            if (!marked.contains(outEdge)) {
-
+        for (Edge out : g.adj(end)) {
+            if (!marked.contains(out)) {
                 // Got a way out from this end
-                List<Integer> path = walk(g, outEdge, end, target);
+                List<Integer> path = walk(g, out, end, target);
 
-                // No way to complete the cycle
-                if (path == null)
-                    return null;
-
-                path.add(0, end);
-                return path;
+                // A non-null path means we found a way to reach target.
+                if (path != null) {
+	                path.add(0, end);
+	                return path;
+                }
             }
         }
 
-        // No way out from 'end' vertex.
+        // No way to reach 'target' through this edge.
+        marked.remove(e);
         return null;
 
     }
