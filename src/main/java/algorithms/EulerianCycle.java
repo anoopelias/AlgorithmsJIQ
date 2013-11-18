@@ -24,127 +24,121 @@ import edu.princeton.cs.algs4.EdgeWeightedGraph;
  */
 public class EulerianCycle {
 
-	public boolean hasEulerianCycle;
-	public List<Integer> cycle;
+    public boolean hasEulerianCycle;
+    public List<Integer> cycle;
 
-	public List<Edge> marked;
+    public List<Edge> marked;
 
-	public EulerianCycle(EdgeWeightedGraph g) {
-		if (g.E() > 0) {
-			marked = new ArrayList<Edge>();
-			Edge e = g.edges().iterator().next();
+    public EulerianCycle(EdgeWeightedGraph g) {
+        if (g.E() > 0) {
+            marked = new ArrayList<Edge>();
+            Edge e = g.edges().iterator().next();
 
-			int start = e.either();
-			cycle = walk(g, e, start, start);
+            int start = e.either();
+            cycle = walk(g, e, start, start);
 
-			while (cycle != null && marked.size() != g.E()) {
-				cycle = walkFromCycle(g, cycle);
-			}
-			
-			if(cycle != null)
-				cycle.add(start);
+            while (cycle != null && marked.size() != g.E()) {
+                cycle = walkFromCycle(g, cycle);
+            }
 
-			hasEulerianCycle = (cycle != null && marked.size() == g.E());
-		}
-	}
+            if (cycle != null)
+                cycle.add(start);
 
-	private List<Integer> walkFromCycle(EdgeWeightedGraph g, List<Integer> path) {
-		boolean updated = false;
+            hasEulerianCycle = (cycle != null && marked.size() == g.E());
+        }
+    }
 
-		for (Edge e : g.edges()) {
+    private List<Integer> walkFromCycle(EdgeWeightedGraph g, List<Integer> path) {
+        for (Edge e : g.edges()) {
 
-			if (!marked.contains(e)) {
-				int v = e.either();
-				if (!path.contains(v))
-					v = e.other(v);
+            if (!marked.contains(e)) {
+                int v = e.either();
+                if (!path.contains(v))
+                    v = e.other(v);
 
-				// Edge e has a point on the path.
-				if (path.contains(v)) {
-					List<Integer> newLoop = walk(g, e, v, v);
-					if (newLoop == null)
-						return null;
+                if (path.contains(v)) {
+                    // Edge e has a point on the path.
+                    List<Integer> newLoop = walk(g, e, v, v);
+                    if (newLoop == null)
+                        return null;
 
-					path.addAll(path.indexOf(v) + 1, newLoop);
-					updated = true;
+                    path.addAll(path.indexOf(v) + 1, newLoop);
+                    
+                    return path;
+                }
+            }
+        }
 
-					break;
-				}
-			}
-		}
+        return null;
+    }
 
-		if (updated)
-			return path;
-		else
-			return null;
-	}
+    /**
+     * Identify a path from 'from' to 'target' using edge 'e' as the first edge.
+     * 
+     * Returns null if the path can't be found.
+     * 
+     * @param g
+     * @param e
+     * @param from
+     * @param target
+     * @return 
+     */
+    private List<Integer> walk(EdgeWeightedGraph g, Edge e, int from, int target) {
 
-	/**
-	 * Identify a path from 'from' to 'target' using edge 'e' as the first edge.
-	 * 
-	 * Returns null if the path can't be found.
-	 * 
-	 * @param g graph
-	 * @param e starting edge
-	 * @param from stating vertex
-	 * @param target target verted.
-	 * @return path from 'from' to 'target'
-	 */
-	private List<Integer> walk(EdgeWeightedGraph g, Edge e, int from, int target) {
+        marked.add(e);
+        int end = e.other(from);
 
-		marked.add(e);
-		int end = e.other(from);
+        // Completed the cycle
+        if (end == target)
+            return newPath(end);
 
-		// Completed the cycle
-		if (end == target)
-			return newPath(end);
+        for (Edge outEdge : g.adj(end)) {
+            if (!marked.contains(outEdge)) {
 
-		for (Edge outEdge : g.adj(end)) {
-			if (!marked.contains(outEdge)) {
+                // Got a way out from this end
+                List<Integer> path = walk(g, outEdge, end, target);
 
-				// Got a way out from this end
-				List<Integer> path = walk(g, outEdge, end, target);
+                // No way to complete the cycle
+                if (path == null)
+                    return null;
 
-				// No way to complete the cycle
-				if (path == null)
-					return null;
+                path.add(0, end);
+                return path;
+            }
+        }
 
-				path.add(0, end);
-				return path;
-			}
-		}
+        // No way out from 'end' vertex.
+        return null;
 
-		// No way out from 'end' vertex.
-		return null;
+    }
 
-	}
+    /**
+     * Create a new single-vertex path.
+     * 
+     * @param v
+     * @return
+     */
+    private List<Integer> newPath(int v) {
+        List<Integer> path = new ArrayList<Integer>();
+        path.add(v);
+        return path;
+    }
 
-	/** 
-	 * Create a new single-vertex path.
-	 * 
-	 * @param v
-	 * @return
-	 */
-	private List<Integer> newPath(int v) {
-		List<Integer> path = new ArrayList<Integer>();
-		path.add(v);
-		return path;
-	}
+    /**
+     * @return whether the graph has an eulerian path or not.
+     */
+    public boolean hasEulerianCycle() {
+        return hasEulerianCycle;
+    }
 
-	/**
-	 * @return whether the graph has an eulerian path or not.
-	 */
-	public boolean hasEulerianCycle() {
-		return hasEulerianCycle;
-	}
-
-	/**
-	 * @return the eulerian path if exists, else null
-	 */
-	public List<Integer> eulerianCycle() {
-		if (hasEulerianCycle)
-			return cycle;
-		else
-			return null;
-	}
+    /**
+     * @return the eulerian path if exists, else null
+     */
+    public List<Integer> eulerianCycle() {
+        if (hasEulerianCycle)
+            return cycle;
+        else
+            return null;
+    }
 
 }
