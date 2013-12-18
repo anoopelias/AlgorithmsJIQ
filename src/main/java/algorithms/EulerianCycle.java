@@ -2,9 +2,11 @@ package algorithms;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
-import edu.princeton.cs.algs4.Edge;
-import edu.princeton.cs.algs4.EdgeWeightedGraph;
+import algorithms.api.Edge;
+import algorithms.api.Graph;
+
 
 /**
  * Eulierian path.
@@ -28,7 +30,7 @@ public class EulerianCycle {
     public List<Integer> cycle;
 
     public List<Edge> marked;
-    public EdgeWeightedGraph g;
+    public Graph g;
 
     /**
      * We use EdgeWeightedGraph so that the edges are available as an object.
@@ -44,18 +46,21 @@ public class EulerianCycle {
      * 
      * @param g graph
      */
-    public EulerianCycle(EdgeWeightedGraph g) {
-        if (g.E() > 0) {
+    public EulerianCycle(Graph g) {
+        
+        Set<Edge> allEdges = g.edges();
+        
+        if (allEdges.size() > 0) {
             this.g = g;
             marked = new ArrayList<Edge>();
 
             // Find a vertex on an edge. Any arbitrary vertex might end up being
             // a non-connected vertex.
-            int v = g.edges().iterator().next().either();
+            int v = allEdges.iterator().next().either();
 
             cycle = cycle(v, v);
 
-            hasEulerianCycle = (marked.size() == g.E());
+            hasEulerianCycle = (marked.size() == g.edges().size());
         }
     }
 

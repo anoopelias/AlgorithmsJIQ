@@ -43,31 +43,31 @@ public class Graph {
      * Initialize graph from an input stream.
      * 
      * @param is
-     * @throws NumberFormatException
-     * @throws IOException
      */
-    public Graph(InputStream is) throws NumberFormatException, IOException {
+    public Graph(InputStream is) {
 
-        BufferedReader reader = null;
-        try {
-
-            reader = new BufferedReader(new InputStreamReader(is));
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
             this.n = Integer.parseInt(reader.readLine());
             init();
 
             int c = Integer.parseInt(reader.readLine());
-            for (int i = 0; i < c; i++) {
-                StringTokenizer st = new StringTokenizer(reader.readLine());
-                int from = Integer.parseInt(st.nextToken());
-                int to = Integer.parseInt(st.nextToken());
-                addEdge(new Edge(from, to));
-            }
+            for (int i = 0; i < c; i++)
+                addEdge(reader.readLine());
 
-        } finally {
-            if (reader != null)
-                reader.close();
+        } catch(NumberFormatException e) {
+            throw new InvalidFileException(e);
+        } catch(IOException e) {
+            throw new InvalidFileException(e);
         }
 
+    }
+
+    private boolean addEdge(String edgeStr) {
+        StringTokenizer st = new StringTokenizer(edgeStr);
+        int from = Integer.parseInt(st.nextToken());
+        int to = Integer.parseInt(st.nextToken());
+        
+        return addEdge(new Edge(from, to));
     }
 
     /**
@@ -85,12 +85,8 @@ public class Graph {
      * @param v
      * @return
      */
-    public Set<Integer> adj(int v) {
-        Set<Integer> adjV = new HashSet<>();
-        for(Edge e : adjacencyList.get(v))
-            adjV.add(e.other(v));
-        
-        return adjV;
+    public Set<Edge> adj(int v) {
+        return adjacencyList.get(v);
     }
 
     /**

@@ -3,6 +3,7 @@ package algorithms;
 import java.util.ArrayList;
 import java.util.List;
 
+import algorithms.api.Edge;
 import algorithms.api.Graph;
 
 /**
@@ -84,7 +85,8 @@ public class Tree {
 			return path;
 		}
 
-		for (int w : g.adj(from)) {
+		for (Edge e : g.adj(from)) {
+		    int w = e.other(from);
 			if (!visited[w]) {
 				List<Integer> path = pathTo(g, w, to);
 				if (path != null) {
@@ -102,7 +104,8 @@ public class Tree {
 		distTo[v] = d;
 		int far = v;
 
-		for (int w : g.adj(v)) {
+		for (Edge e : g.adj(v)) {
+		    int w = e.other(v);
 			if (!visited[w]) {
 				int f = farthest(g, w, d + 1);
 
