@@ -29,8 +29,11 @@ public class GraphTest {
         List<Edge> allEdges = new ArrayList<Edge>();
         
         for(int i = 0; i<n; i++) {
-        	for(int j=i+1; j<n; j++) {
-        		allEdges.add(new Edge(i, j));
+        	for(int j=0; j<n; j++) {
+        	    
+        	    // Typical twitter followers cannot follow themselves.
+        	    if ( i != j)
+        	        allEdges.add(new Edge(i, j));
         	}
         }
 
