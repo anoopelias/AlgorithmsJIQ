@@ -15,28 +15,29 @@ import org.junit.Test;
 
 public class DigraphTest {
     
-	//@Test
+	@Test
     /*
      * Use this method to generate a Digraph randomly.
      */
     public void test_generate_Digraph() {
 		
-    	int n = 5000;
-    	int c = 30000;
+    	int n = 3000;
+    	int c = 500;
     	
         Digraph g = new Digraph(n);
         
-        List<DirectedEdge> allDirectedEdges = new ArrayList<DirectedEdge>();
+        List<DirectedEdge> allEdges = new ArrayList<DirectedEdge>();
         
         for(int i = 0; i<n; i++) {
-        	for(int j=i+1; j<n; j++) {
-        		allDirectedEdges.add(new DirectedEdge(i, j));
+        	for(int j=0; j<n; j++) {
+        	    if (i != j)
+        	        allEdges.add(new DirectedEdge(i, j));
         	}
         }
 
-        Collections.shuffle(allDirectedEdges);
+        Collections.shuffle(allEdges);
         
-        for(DirectedEdge e : allDirectedEdges.subList(0, c)) {
+        for(DirectedEdge e : allEdges.subList(0, c)) {
         	g.addEdge(e);
         }
         

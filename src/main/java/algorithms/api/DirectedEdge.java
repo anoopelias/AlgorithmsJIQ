@@ -1,5 +1,11 @@
 package algorithms.api;
 
+/**
+ * Directed edge representation.
+ * 
+ * @author Anoop Elias
+ *
+ */
 public class DirectedEdge {
     
     private int from;

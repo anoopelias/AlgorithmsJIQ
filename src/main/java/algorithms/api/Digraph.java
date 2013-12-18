@@ -10,6 +10,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+/**
+ * Digraph representation.
+ * 
+ * @author Anoop Elias
+ *
+ */
 public class Digraph {
     
     private int n;
