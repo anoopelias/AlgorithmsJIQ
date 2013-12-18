@@ -3,7 +3,7 @@ package algorithms;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.princeton.cs.algs4.Graph;
+import algorithms.api.Graph;
 
 /**
  * 
@@ -42,10 +42,10 @@ public class Tree {
 		 * TODO: Need to verify if g is really a tree.
 		 */
 
-		if (g.V() > 0) {
+		if (g.edges().size() > 0) {
 
-			distTo = new int[g.V()];
-			visited = new boolean[g.V()];
+			distTo = new int[g.n()];
+			visited = new boolean[g.n()];
 
 			/*
 			 * Find the farthest from any arbitrary vertex. We can assume that
@@ -53,14 +53,14 @@ public class Tree {
 			 */
 			int start = farthest(g, 0, 0);
 
-			visited = new boolean[g.V()];
+			visited = new boolean[g.n()];
 
 			/*
 			 * Find the longest path from the starting vertex.
 			 */
 			int end = farthest(g, start, 0);
 
-			visited = new boolean[g.V()];
+			visited = new boolean[g.n()];
 			
 			/*
 			 * Find the path from start to end.
